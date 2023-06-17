@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>U+25D0,U+25D1,U+25D2,U+25D3 with random color</title>
+    <style>
+      /* Prevents scrollbars from appearing */
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+      /* Fullscreen canvas */
+      #starField {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+    <script>
+      function getRandomColor() {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      setTimeout(function () {
+        location.reload();
+      }, 3000);
+    </script>
+  </head>
+  <body>
+    <canvas id="starField"></canvas>
+    <script>
+      const symbols = [
+        "\u25D0", // ◐
+        "\u25D1", // ◑
+        "\u25D2", // ◒
+        "\u25D3", // ◓
+      ];
+      const canvas = document.getElementById("starField");
+      const context = canvas.getContext("2d");
+
+      function fillCanvasWithChar() {
+        // Clear previous drawings
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Set canvas size to fill viewport
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Set font and fill color
+        context.font = "32px monospace"; // Adjust size as needed
+        context.fillStyle = "black"; // Adjust color as needed
+
+        const charWidth = context.measureText(symbols[0]).width;
+        const charHeight = parseInt(context.font, 10); // Extract size from font property
+
+        const numCharsHorizontal = Math.floor(canvas.width / charWidth);
+        const numCharsVertical = Math.floor(canvas.height / charHeight);
+
+        // Set random background color
+        document.body.style.backgroundColor = getRandomColor();
+
+        for (let y = 0; y < numCharsVertical; y++) {
+          for (let x = 0; x < numCharsHorizontal; x++) {
+            const char = symbols[Math.floor(Math.random() * symbols.length)]; // Select a random symbol
+            context.fillText(
+              char,
+              x * charWidth,
+              y * charHeight + charHeight - 5 // Adjust baseline position
+            );
+          }
+        }
+      }
+
+      window.onload = fillCanvasWithChar;
+      window.onresize = fillCanvasWithChar;
+    </script>
+  </body>
+</html>
