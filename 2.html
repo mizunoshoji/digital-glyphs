@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Viewport Rendering</title>
+    <style>
+      /* Reset CSS */
+      /* Add your reset.css styles here */
+
+      /* Prevent scrollbars from appearing */
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Fullscreen canvas */
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+
+      /* Site title */
+      .site-title {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-family: "Arial", sans-serif;
+        font-weight: bold;
+        color: #000000;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="viewportCanvas"></canvas>
+    <div class="site-title"></div>
+
+    <script>
+      const symbols = [
+        "\u25B3", // △
+        "\u25BD", // ▽
+        "\u25B7", // ▷
+        "\u25C1", // ◁
+      ];
+      const canvas = document.getElementById("viewportCanvas");
+      const context = canvas.getContext("2d");
+      const siteTitle = document.querySelector(".site-title");
+
+      function fillViewportWithSymbol() {
+        // Clear previous drawings
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Set canvas size to fill viewport
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Set random background color
+        const randomColor = getRandomColor();
+        document.body.style.backgroundColor = randomColor;
+
+        // Set random symbol color
+        const randomSymbolIndex = Math.floor(Math.random() * symbols.length);
+        const symbol = symbols[randomSymbolIndex];
+        const randomSymbolColor = getRandomColor();
+        context.fillStyle = randomSymbolColor;
+
+        const symbolSize = Math.min(canvas.width, canvas.height) * 0.8;
+        const symbolX = (canvas.width - symbolSize) / 2;
+        const symbolY = (canvas.height - symbolSize) / 2 + symbolSize * 0.9; // Adjust vertical position
+
+        // Set font size and draw symbol
+        context.font = `${symbolSize}px sans-serif`;
+        context.fillText(symbol, symbolX, symbolY);
+
+        // Update site title
+        siteTitle.textContent = `Four Unicode : ${getUnicodeCode(symbol)}`;
+        siteTitle.style.color = randomSymbolColor;
+
+        // Listen for click/tap event to trigger reload
+        document.addEventListener("click", handleReload);
+        document.addEventListener("touchstart", handleReload);
+      }
+
+      function getRandomColor() {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      function getUnicodeCode(symbol) {
+        return symbol.charCodeAt(0).toString(16).toUpperCase();
+      }
+
+      function handleReload() {
+        location.reload();
+      }
+
+      window.onload = fillViewportWithSymbol;
+      window.onresize = fillViewportWithSymbol;
+    </script>
+  </body>
+</html>
