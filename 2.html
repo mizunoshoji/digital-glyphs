@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Viewport Rendering</title>
+    <title>Four Unicode and Random Colors</title>
     <style>
       /* Reset CSS */
       /* Add your reset.css styles here */
@@ -30,6 +30,12 @@
         color: #000000;
         font-size: 16px;
       }
+
+      @media (max-width: 600px) {
+        .site-title {
+          font-size: 32px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -46,6 +52,7 @@
       const canvas = document.getElementById("viewportCanvas");
       const context = canvas.getContext("2d");
       const siteTitle = document.querySelector(".site-title");
+      let currentSymbolIndex = 0;
 
       function fillViewportWithSymbol() {
         // Clear previous drawings
@@ -60,8 +67,7 @@
         document.body.style.backgroundColor = randomColor;
 
         // Set random symbol color
-        const randomSymbolIndex = Math.floor(Math.random() * symbols.length);
-        const symbol = symbols[randomSymbolIndex];
+        const symbol = symbols[currentSymbolIndex];
         const randomSymbolColor = getRandomColor();
         context.fillStyle = randomSymbolColor;
 
@@ -74,12 +80,8 @@
         context.fillText(symbol, symbolX, symbolY);
 
         // Update site title
-        siteTitle.textContent = `Four Unicode : ${getUnicodeCode(symbol)}`;
+        siteTitle.textContent = `Four Unicode: ${getUnicodeCode(symbol)}`;
         siteTitle.style.color = randomSymbolColor;
-
-        // Listen for click/tap event to trigger reload
-        document.addEventListener("click", handleReload);
-        document.addEventListener("touchstart", handleReload);
       }
 
       function getRandomColor() {
@@ -95,12 +97,21 @@
         return symbol.charCodeAt(0).toString(16).toUpperCase();
       }
 
-      function handleReload() {
-        location.reload();
-      }
+      document.addEventListener("DOMContentLoaded", fillViewportWithSymbol);
+      window.addEventListener("resize", fillViewportWithSymbol);
+      window.addEventListener("click", handleReload);
+      window.addEventListener("touchstart", handleReload);
 
-      window.onload = fillViewportWithSymbol;
-      window.onresize = fillViewportWithSymbol;
+      function handleReload(event) {
+        if (
+          event.target === canvas ||
+          event.target === siteTitle ||
+          event.target.tagName === "BODY"
+        ) {
+          currentSymbolIndex = (currentSymbolIndex + 1) % symbols.length;
+          fillViewportWithSymbol();
+        }
+      }
     </script>
   </body>
 </html>
